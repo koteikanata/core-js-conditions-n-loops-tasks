@@ -442,6 +442,7 @@ function rotateMatrix(matrix) {
  */
 function sortByAsc(arr) {
   function heapify(inner, n, i) {
+    const copy = inner;
     const left = 2 * i + 1;
     const right = 2 * i + 2;
     let largest = i;
@@ -450,13 +451,13 @@ function sortByAsc(arr) {
     if (right < n && inner[right] > inner[largest]) largest = right;
 
     if (largest !== i) {
-      [inner[i], inner[largest]] = [inner[largest], inner[i]];
+      [copy[i], copy[largest]] = [inner[largest], inner[i]];
       return heapify(inner, n, largest);
     }
     return inner;
   }
 
-  let copy = [...arr];
+  let copy = arr;
   for (let i = Math.floor(arr.length / 2) - 1; i >= 0; i -= 1) {
     copy = heapify(arr, arr.length, i);
   }
@@ -466,7 +467,7 @@ function sortByAsc(arr) {
     copy = heapify(arr, i, 0);
   }
 
-  return copy;
+  return arr;
 }
 
 /**
