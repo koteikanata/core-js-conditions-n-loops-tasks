@@ -259,15 +259,16 @@ function getIndexOf(str, letter) {
  */
 function isContainNumber(num, digit) {
   let currentDigit;
+  let curNum = num;
 
-  while (num > 0) {
-    currentDigit = num % 10;
+  while (curNum > 0) {
+    currentDigit = curNum % 10;
 
     if (currentDigit === digit) {
       return true;
     }
 
-    num = Math.floor(num / 10);
+    curNum = Math.floor(curNum / 10);
   }
 
   return false;
@@ -404,24 +405,25 @@ function getSpiralMatrix(size) {
  */
 function rotateMatrix(matrix) {
   const n = matrix.length;
+  const m = matrix;
 
-  for (let i = 0; i < n; i++) {
-    for (let j = i + 1; j < n; j++) {
+  for (let i = 0; i < n; i += 1) {
+    for (let j = i + 1; j < n; j += 1) {
       const temp = matrix[i][j];
-      matrix[i][j] = matrix[j][i];
-      matrix[j][i] = temp;
+      m[i][j] = matrix[j][i];
+      m[j][i] = temp;
     }
   }
 
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < Math.floor(n / 2); j++) {
+  for (let i = 0; i < n; i += 1) {
+    for (let j = 0; j < Math.floor(n / 2); j += 1) {
       const temp = matrix[i][j];
-      matrix[i][j] = matrix[i][n - 1 - j];
-      matrix[i][n - 1 - j] = temp;
+      m[i][j] = matrix[i][n - 1 - j];
+      m[i][n - 1 - j] = temp;
     }
   }
 
-  return matrix;
+  return m;
 }
 
 /**
@@ -439,30 +441,32 @@ function rotateMatrix(matrix) {
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
 function sortByAsc(arr) {
-  for (let i = Math.floor(arr.length / 2) - 1; i >= 0; i--) {
-    heapify(arr, arr.length, i);
+  function heapify(inner, n, i) {
+    const left = 2 * i + 1;
+    const right = 2 * i + 2;
+    let largest = i;
+
+    if (left < n && inner[left] > inner[largest]) largest = left;
+    if (right < n && inner[right] > inner[largest]) largest = right;
+
+    if (largest !== i) {
+      [inner[i], inner[largest]] = [inner[largest], inner[i]];
+      return heapify(inner, n, largest);
+    }
+    return inner;
   }
 
-  for (let i = arr.length - 1; i > 0; i--) {
-    [arr[0], arr[i]] = [arr[i], arr[0]];
-    heapify(arr, i, 0);
+  let copy = [...arr];
+  for (let i = Math.floor(arr.length / 2) - 1; i >= 0; i -= 1) {
+    copy = heapify(arr, arr.length, i);
   }
 
-  return arr;
-}
-
-function heapify(arr, n, i) {
-  const left = 2 * i + 1;
-  const right = 2 * i + 2;
-  let largest = i;
-
-  if (left < n && arr[left] > arr[largest]) largest = left;
-  if (right < n && arr[right] > arr[largest]) largest = right;
-
-  if (largest !== i) {
-    [arr[i], arr[largest]] = [arr[largest], arr[i]];
-    heapify(arr, n, largest);
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    [copy[0], copy[i]] = [arr[i], arr[0]];
+    copy = heapify(arr, i, 0);
   }
+
+  return copy;
 }
 
 /**
@@ -482,12 +486,14 @@ function heapify(arr, n, i) {
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
-function shuffleChar(str, iterations) {
+function shuffleChar(inputStr, inputIterations) {
+  let str = inputStr;
+  let iterations = inputIterations;
   const len = str.length;
 
   function findCycleLength() {
     const initialStr = str;
-    let iterations = 0;
+    let count = 0;
 
     do {
       let oddChars = '';
@@ -499,10 +505,10 @@ function shuffleChar(str, iterations) {
       str = str.replace(/./g, (char, index) => (index % 2 === 0 ? char : ''));
 
       str += oddChars;
-      iterations++;
+      count += 1;
     } while (str !== initialStr);
 
-    return iterations;
+    return count;
   }
 
   const cycleLength = findCycleLength();
@@ -511,7 +517,7 @@ function shuffleChar(str, iterations) {
     iterations %= cycleLength;
   }
 
-  for (let iter = 0; iter < iterations; iter++) {
+  for (let iter = 0; iter < iterations; iter += 1) {
     let oddChars = '';
 
     for (let i = 1; i < len; i += 2) {
@@ -555,7 +561,7 @@ function getNearestBigger(number) {
   let i = digits.length - 2;
 
   while (i >= 0 && digits[i] >= digits[i + 1]) {
-    i--;
+    i -= 1;
   }
 
   if (i === -1) {
@@ -565,17 +571,17 @@ function getNearestBigger(number) {
   let j = digits.length - 1;
 
   while (digits[j] <= digits[i]) {
-    j--;
+    j -= 1;
   }
 
-  const temp = digits[i];
+  const tempValue = digits[i];
   digits[i] = digits[j];
-  digits[j] = temp;
+  digits[j] = tempValue;
 
   for (
     let left = i + 1, right = digits.length - 1;
     left < right;
-    left++, right--
+    left += 1, right -= 1
   ) {
     const temp = digits[left];
     digits[left] = digits[right];
@@ -583,7 +589,7 @@ function getNearestBigger(number) {
   }
 
   let result = 0;
-  for (let k = 0; k < digits.length; k++) {
+  for (let k = 0; k < digits.length; k += 1) {
     result = result * 10 + digits[k];
   }
 
